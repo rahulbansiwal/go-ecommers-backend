@@ -18,17 +18,20 @@ Table items as I {
     price int [not null]
     created_by varchar(255) [ref:> U.username]
     discount int [not null,default: 0]
-    created_at timestamptz [not null,default: `now()`]
-    images varchar[10] 
-
+    created_at timestamptz [not null,default: `now()`] 
     indexes{
         (id,name) 
     }
 
 }
 
+Table item_images as II{
+    item_id int [ref: > I.id]
+    image_url varchar(500) [not null]
+}
+
 Table addresses as A{
-    username varchar(255) [ref: > U.username]
+    username varchar(255) [ref: > U.username, not null]
     full_name varchar(255) [not null]
     country_code varchar(3) [not null]
     city varchar(10) [not null]
