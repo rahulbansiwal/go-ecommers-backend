@@ -10,6 +10,7 @@ import (
 )
 
 type Address struct {
+	ID           int32  `json:"id"`
 	Username     string `json:"username"`
 	FullName     string `json:"full_name"`
 	CountryCode  string `json:"country_code"`
@@ -20,27 +21,29 @@ type Address struct {
 }
 
 type Cart struct {
-	Username   sql.NullString `json:"username"`
-	ID         int32          `json:"id"`
-	TotalValue int32          `json:"total_value"`
+	Username   string `json:"username"`
+	ID         int32  `json:"id"`
+	TotalValue int32  `json:"total_value"`
 }
 
 type CartItem struct {
 	CartID   int32         `json:"cart_id"`
-	ItemID   sql.NullInt32 `json:"item_id"`
+	ItemID   int32         `json:"item_id"`
 	Quantity sql.NullInt32 `json:"quantity"`
 }
 
 type Item struct {
-	ID        int32          `json:"id"`
-	Name      string         `json:"name"`
-	Price     int32          `json:"price"`
-	CreatedBy sql.NullString `json:"created_by"`
-	Discount  int32          `json:"discount"`
-	CreatedAt time.Time      `json:"created_at"`
+	ID        int32     `json:"id"`
+	Name      string    `json:"name"`
+	Price     string    `json:"price"`
+	CreatedBy string    `json:"created_by"`
+	Discount  int32     `json:"discount"`
+	Category  string    `json:"category"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type ItemImage struct {
+	ID       int32         `json:"id"`
 	ItemID   sql.NullInt32 `json:"item_id"`
 	ImageUrl string        `json:"image_url"`
 }

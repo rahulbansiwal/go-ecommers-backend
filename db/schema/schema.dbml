@@ -15,9 +15,10 @@ Table users as U{
 Table items as I {
     id int [pk,increment]
     name varchar(500) [not null,unique]
-    price int [not null]
-    created_by varchar(255) [ref:> U.username]
+    price numeric [not null]
+    created_by varchar(255) [ref:> U.username,not null]
     discount int [not null,default: 0]
+    category varchar(255) [not null] 
     created_at timestamptz [not null,default: `now()`] 
     indexes{
         (id,name) 
@@ -26,11 +27,13 @@ Table items as I {
 }
 
 Table item_images as II{
+    id serial [pk,increment]
     item_id int [ref: > I.id]
     image_url varchar(500) [not null]
 }
 
 Table addresses as A{
+    id int [pk,increment]
     username varchar(255) [ref: > U.username, not null]
     full_name varchar(255) [not null]
     country_code varchar(3) [not null]
@@ -40,15 +43,15 @@ Table addresses as A{
     mobile_number bigint [not null]
 }
 Table cart as C{
-    username varchar(255) [ref: - U.username]
+    username varchar(255) [ref: - U.username,not null]
     id int [pk,increment]
     total_value int [not null,default:0]
 }
 
 Table cart_items as IT{
     cart_id int [not null,ref: > C.id]
-    item_id int [ref: > I.id]
-    quantity int [default: 0]
+    item_id int [ref: > I.id,not null]
+    quantity int [default: 1]
 
     indexes{
         cart_id
