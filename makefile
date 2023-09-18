@@ -18,5 +18,7 @@ migratedown:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down
 sqlc:
 	docker run --rm -v "$(pwd)":/src -w /src sqlc/sqlc generate
+test:
+	go test ./... -v
 
-.PHONY: schema postgres-server dropdb createdb new_migration migrateup migratedown sqlc
+.PHONY: schema postgres-server dropdb createdb new_migration migrateup migratedown sqlc test

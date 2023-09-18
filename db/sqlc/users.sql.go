@@ -72,7 +72,7 @@ SET
     hashed_password = coalesce($2,hashed_password),
     full_name =coalesce($3,full_name),
     mobile_number = coalesce($4,mobile_number)
-WHERE username = $1
+WHERE username = $5
 RETURNING username, hashed_password, full_name, mobile_number, password_changed_at, is_email_verified, created_at
 `
 
@@ -81,6 +81,7 @@ type UpdateUserParams struct {
 	HashedPassword sql.NullString `json:"hashed_password"`
 	FullName       sql.NullString `json:"full_name"`
 	MobileNumber   sql.NullInt64  `json:"mobile_number"`
+	User           string         `json:"user"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
@@ -89,6 +90,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.HashedPassword,
 		arg.FullName,
 		arg.MobileNumber,
+		arg.User,
 	)
 	var i User
 	err := row.Scan(

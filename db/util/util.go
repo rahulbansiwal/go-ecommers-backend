@@ -11,6 +11,13 @@ const (
 	alphabat = "abcdefghijklmnopqrstuvwxyz"
 )
 
+type randomaddress struct {
+	CountryCode string
+	City        string
+	Street      string
+	Landmark    string
+}
+
 func init() {
 	rand.NewSource(int64(time.Now().UnixNano()))
 }
@@ -29,8 +36,26 @@ func RandomFullName(n int) string {
 	return randomString(n)
 }
 
-func RandomUsername() string{
-	return fmt.Sprintf("%v@%v.com",randomString(6),randomString(5))
+func RandomUsername() string {
+	return fmt.Sprintf("%v@%v.com", randomString(6), randomString(5))
 }
 
-//func RandomMobileNumber()
+func RandomMobileNumber() int64 {
+	var result int64
+	for i := 0; i < 10; i++ {
+		result = result * 10
+		n := rand.Int63n(9)
+		result += n
+	}
+	return result
+}
+
+func RandomAddressDetails() randomaddress {
+	result := randomaddress{
+		CountryCode: randomString(3),
+		City:        randomString(6),
+		Street:      randomString(10),
+		Landmark:    randomString(10),
+	}
+	return result
+}
