@@ -19,3 +19,6 @@ RETURNING *;
 
 -- name: DeleteAddress :one
 DELETE FROM addresses WHERE id = $1 RETURNING *;
+
+-- name: GetAddresses :many
+SELECT * FROM addresses WHERE username = $1;

@@ -72,6 +72,42 @@ func (q *Queries) DeleteAddress(ctx context.Context, id int32) (Address, error) 
 	return i, err
 }
 
+const getAddresses = `-- name: GetAddresses :many
+SELECT id, username, full_name, country_code, city, street, landmark, mobile_number FROM addresses WHERE username = $1
+`
+
+func (q *Queries) GetAddresses(ctx context.Context, username string) ([]Address, error) {
+	rows, err := q.db.QueryContext(ctx, getAddresses, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Address{}
+	for rows.Next() {
+		var i Address
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.FullName,
+			&i.CountryCode,
+			&i.City,
+			&i.Street,
+			&i.Landmark,
+			&i.MobileNumber,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateAddress = `-- name: UpdateAddress :one
 UPDATE addresses
 SET

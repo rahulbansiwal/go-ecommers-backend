@@ -22,7 +22,7 @@ func init() {
 	rand.NewSource(int64(time.Now().UnixNano()))
 }
 
-func randomString(n int) string {
+func RandomString(n int) string {
 	var s strings.Builder
 	k := len(alphabat)
 	for i := 0; i < n; i++ {
@@ -33,11 +33,11 @@ func randomString(n int) string {
 }
 
 func RandomFullName(n int) string {
-	return randomString(n)
+	return RandomString(n)
 }
 
 func RandomUsername() string {
-	return fmt.Sprintf("%v@%v.com", randomString(6), randomString(5))
+	return fmt.Sprintf("%v@%v.com", RandomString(6), RandomString(5))
 }
 
 func RandomMobileNumber() int64 {
@@ -52,10 +52,14 @@ func RandomMobileNumber() int64 {
 
 func RandomAddressDetails() randomaddress {
 	result := randomaddress{
-		CountryCode: randomString(3),
-		City:        randomString(6),
-		Street:      randomString(10),
-		Landmark:    randomString(10),
+		CountryCode: RandomString(3),
+		City:        RandomString(6),
+		Street:      RandomString(10),
+		Landmark:    RandomString(10),
 	}
 	return result
+}
+
+func RandomAmount(n int) int {
+	return rand.Intn(n)
 }

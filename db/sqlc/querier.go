@@ -19,6 +19,7 @@ type Querier interface {
 	DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) (CartItem, error)
 	DeleteItem(ctx context.Context, id int32) (Item, error)
 	DeleteItemImage(ctx context.Context, id int32) (ItemImage, error)
+	GetAddresses(ctx context.Context, username string) ([]Address, error)
 	GetCart(ctx context.Context, username string) (Cart, error)
 	GetItemById(ctx context.Context, id int32) (Item, error)
 	GetUser(ctx context.Context, username string) (User, error)
