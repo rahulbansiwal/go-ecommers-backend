@@ -81,7 +81,7 @@ type UpdateUserParams struct {
 	HashedPassword sql.NullString `json:"hashed_password"`
 	FullName       sql.NullString `json:"full_name"`
 	MobileNumber   sql.NullInt64  `json:"mobile_number"`
-	User           string         `json:"user"`
+	OldUser        string         `json:"old_user"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
@@ -90,7 +90,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.HashedPassword,
 		arg.FullName,
 		arg.MobileNumber,
-		arg.User,
+		arg.OldUser,
 	)
 	var i User
 	err := row.Scan(

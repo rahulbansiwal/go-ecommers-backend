@@ -16,6 +16,6 @@ SET
     hashed_password = coalesce(sqlc.narg('hashed_password'),hashed_password),
     full_name =coalesce(sqlc.narg('full_name'),full_name),
     mobile_number = coalesce(sqlc.narg('mobile_number'),mobile_number)
-WHERE username = sqlc.arg('user')
+WHERE username = sqlc.arg('oldUser')
 RETURNING *;
 

@@ -32,41 +32,41 @@ func TestGetUser(t *testing.T) {
 func TestUpdateUser(t *testing.T) {
 	user := CreateRandomUser(t)
 	newdetails := struct {
-		NewUsername       string
+		NewUsername    string
 		FullName       string
 		HashedPassword string
 		MobileNumber   int64
 	}{
-		NewUsername:       util.RandomUsername(),
+		NewUsername:    util.RandomUsername(),
 		FullName:       util.RandomFullName(6),
 		HashedPassword: util.RandomFullName(6),
 		MobileNumber:   util.RandomMobileNumber(),
 	}
-	newuser,err := testQueries.UpdateUser(context.Background(),UpdateUserParams{
-		User: user.Username,
+	newuser, err := testQueries.UpdateUser(context.Background(), UpdateUserParams{
+		OldUser: user.Username,
 		Username: sql.NullString{
 			String: newdetails.NewUsername,
-			Valid: true,
+			Valid:  true,
 		},
 		FullName: sql.NullString{
 			String: newdetails.FullName,
-			Valid: true,
+			Valid:  true,
 		},
 		HashedPassword: sql.NullString{
 			String: newdetails.HashedPassword,
-			Valid: true,
+			Valid:  true,
 		},
 		MobileNumber: sql.NullInt64{
 			Int64: newdetails.MobileNumber,
 			Valid: true,
 		},
 	})
-	assert.NoError(t,err)
-	assert.NotEmpty(t,newuser)
-	assert.Equal(t,newdetails.NewUsername,newuser.Username)
-	assert.Equal(t,newdetails.FullName,newuser.FullName)
-	assert.Equal(t,newdetails.HashedPassword,newuser.HashedPassword)
-	assert.Equal(t,newdetails.MobileNumber,newuser.MobileNumber.Int64)
+	assert.NoError(t, err)
+	assert.NotEmpty(t, newuser)
+	assert.Equal(t, newdetails.NewUsername, newuser.Username)
+	assert.Equal(t, newdetails.FullName, newuser.FullName)
+	assert.Equal(t, newdetails.HashedPassword, newuser.HashedPassword)
+	assert.Equal(t, newdetails.MobileNumber, newuser.MobileNumber.Int64)
 
 }
 
