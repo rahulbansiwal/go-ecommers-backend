@@ -13,6 +13,10 @@ SET
 WHERE cart_id = $1 AND item_id = $2
 RETURNING *;
 
+-- name: GetCartItemFromCartID :many
+SELECT * FROM cart_items
+WHERE cart_id = $1;
+
 -- name: DeleteCartItem :one
 DELETE FROM cart_items WHERE cart_id = $1 AND item_id = $2
 RETURNING *;

@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"ecom/db/sqlc"
+	"ecom/db/util"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -32,6 +33,18 @@ type UpdateUserMobileNumber struct {
 	MobileNumber string `json:"mobile_number" binding:"numeric"`
 }
 
+type LoginUserReqeust struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
+type LoginUserResponse struct {
+	SessionId            string             `json:"session_id"`
+	AccessToken          string             `json:"access_token"`
+	AccessTokenExpiredAt time.Time          `json:"access_token_expired_at"`
+	User                 CreateUserResponse `json:"user"`
+}
+
 type CreateUserResponse struct {
 	Username     string    `json:"username"`
 	FullName     string    `json:"full_name"`
@@ -54,15 +67,24 @@ func (s *Server) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	msisdn, err := strconv.ParseUint(req.MobileNumber, 10, 64)
+	var msisdn uint64
+	if len(req.MobileNumber) > 0 {
+		var err error
+		msisdn, err = strconv.ParseUint(req.MobileNumber, 10, 64)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid mobile_number passed %w", err)))
+			return
+		}
+	}
+	hashedPassword, err := util.HashPassword(req.HashedPassword)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid mobile_number passed %w", err)))
+		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
 	args := sqlc.CreateUserParams{
 		Username:       req.Username,
 		FullName:       req.FullName,
-		HashedPassword: req.HashedPassword,
+		HashedPassword: hashedPassword,
 		MobileNumber: sql.NullInt64{
 			Int64: int64(msisdn),
 			Valid: true,
@@ -109,7 +131,7 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 	for _, v := range fields {
 		switch v {
 		case "username":
-			// TODO: update username such taht dependent tables will also update
+			// TODO: update username such that dependent tables will also update
 			var r UpdateUserUsername
 			if err := ctx.ShouldBindBodyWith(&r, binding.JSON); err != nil {
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -155,5 +177,39 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 		return
 	}
 	res := userResponse(user)
+	ctx.JSON(http.StatusOK, res)
+}
+
+func (s *Server) LoginUser(ctx *gin.Context) {
+	var req LoginUserReqeust
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	user, err := s.store.GetUser(ctx, req.Username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(fmt.Errorf("user not found")))
+			return
+		}
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+	err = util.CheckPassword(req.Password, user.HashedPassword)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("incorrect password")))
+		return
+	}
+
+	token, payload, err := s.paseto.CreateToken(user.Username, s.config.AccessTokenDuration)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	res := LoginUserResponse{
+		AccessToken:          token,
+		AccessTokenExpiredAt: payload.ExpiredAt,
+		User:                 userResponse(user),
+	}
 	ctx.JSON(http.StatusOK, res)
 }

@@ -48,6 +48,34 @@ func (q *Queries) DeleteCartItem(ctx context.Context, arg DeleteCartItemParams) 
 	return i, err
 }
 
+const getCartItemFromCartID = `-- name: GetCartItemFromCartID :many
+SELECT cart_id, item_id, quantity FROM cart_items
+WHERE cart_id = $1
+`
+
+func (q *Queries) GetCartItemFromCartID(ctx context.Context, cartID int32) ([]CartItem, error) {
+	rows, err := q.db.QueryContext(ctx, getCartItemFromCartID, cartID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []CartItem{}
+	for rows.Next() {
+		var i CartItem
+		if err := rows.Scan(&i.CartID, &i.ItemID, &i.Quantity); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateCartItem = `-- name: UpdateCartItem :one
 UPDATE cart_items
 SET

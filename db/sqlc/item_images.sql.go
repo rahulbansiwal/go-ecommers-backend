@@ -7,7 +7,6 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createItemImage = `-- name: CreateItemImage :one
@@ -19,8 +18,8 @@ RETURNING id, item_id, image_url
 `
 
 type CreateItemImageParams struct {
-	ItemID   sql.NullInt32 `json:"item_id"`
-	ImageUrl string        `json:"image_url"`
+	ItemID   int32  `json:"item_id"`
+	ImageUrl string `json:"image_url"`
 }
 
 func (q *Queries) CreateItemImage(ctx context.Context, arg CreateItemImageParams) (ItemImage, error) {
@@ -31,7 +30,7 @@ func (q *Queries) CreateItemImage(ctx context.Context, arg CreateItemImageParams
 }
 
 const deleteItemImage = `-- name: DeleteItemImage :one
-DELETE FROm item_images WHERE id = $1 
+DELETE FROM item_images WHERE id = $1 
 RETURNING id, item_id, image_url
 `
 
@@ -40,6 +39,34 @@ func (q *Queries) DeleteItemImage(ctx context.Context, id int32) (ItemImage, err
 	var i ItemImage
 	err := row.Scan(&i.ID, &i.ItemID, &i.ImageUrl)
 	return i, err
+}
+
+const getItemImagesFromItemId = `-- name: GetItemImagesFromItemId :many
+SELECT id, item_id, image_url FROM item_images
+WHERE item_id = $1
+`
+
+func (q *Queries) GetItemImagesFromItemId(ctx context.Context, itemID int32) ([]ItemImage, error) {
+	rows, err := q.db.QueryContext(ctx, getItemImagesFromItemId, itemID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ItemImage{}
+	for rows.Next() {
+		var i ItemImage
+		if err := rows.Scan(&i.ID, &i.ItemID, &i.ImageUrl); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateItemImageURL = `-- name: UpdateItemImageURL :one

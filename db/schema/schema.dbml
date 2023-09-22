@@ -28,7 +28,7 @@ Table items as I {
 
 Table item_images as II{
     id serial [pk,increment]
-    item_id int [ref: > I.id]
+    item_id int [ref: > I.id, not null]
     image_url varchar(500) [not null]
 }
 

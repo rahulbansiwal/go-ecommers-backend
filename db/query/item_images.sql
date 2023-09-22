@@ -5,8 +5,12 @@ INSERT INTO item_images(
 VALUES ($1,$2)
 RETURNING *;
 
+-- name: GetItemImagesFromItemId :many
+SELECT * FROM item_images
+WHERE item_id = $1;
+
 -- name: DeleteItemImage :one
-DELETE FROm item_images WHERE id = $1 
+DELETE FROM item_images WHERE id = $1 
 RETURNING *;
 
 -- name: UpdateItemImageURL :one

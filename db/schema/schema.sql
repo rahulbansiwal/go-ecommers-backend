@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-09-16T21:24:37.603Z
+-- Generated at: 2023-09-22T20:23:35.506Z
 
 CREATE TABLE "users" (
   "username" varchar(255) UNIQUE PRIMARY KEY NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE "items" (
 
 CREATE TABLE "item_images" (
   "id" SERIAL PRIMARY KEY,
-  "item_id" int,
+  "item_id" int NOT NULL,
   "image_url" varchar(500) NOT NULL
 );
 

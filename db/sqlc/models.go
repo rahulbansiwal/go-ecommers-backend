@@ -43,9 +43,9 @@ type Item struct {
 }
 
 type ItemImage struct {
-	ID       int32         `json:"id"`
-	ItemID   sql.NullInt32 `json:"item_id"`
-	ImageUrl string        `json:"image_url"`
+	ID       int32  `json:"id"`
+	ItemID   int32  `json:"item_id"`
+	ImageUrl string `json:"image_url"`
 }
 
 type User struct {
