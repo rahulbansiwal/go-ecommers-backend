@@ -1,6 +1,6 @@
 -- SQL dump generated using DBML (dbml-lang.org)
 -- Database: PostgreSQL
--- Generated at: 2023-09-22T20:23:35.506Z
+-- Generated at: 2023-09-23T20:40:07.267Z
 
 CREATE TABLE "users" (
   "username" varchar(255) UNIQUE PRIMARY KEY NOT NULL,
@@ -51,6 +51,16 @@ CREATE TABLE "cart_items" (
   "quantity" int DEFAULT 1
 );
 
+CREATE TABLE "sessions" (
+  "id" uuid UNIQUE PRIMARY KEY,
+  "username" varchar(255) NOT NULL,
+  "refresh_token" varchar(500) NOT NULL,
+  "client_ip" varchar(255) NOT NULL,
+  "is_blocked" bool NOT NULL DEFAULT false,
+  "expired_at" timestamptz NOT NULL,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
+);
+
 CREATE INDEX ON "users" ("username");
 
 CREATE INDEX ON "items" ("id", "name");
@@ -70,3 +80,5 @@ ALTER TABLE "cart" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");
 ALTER TABLE "cart_items" ADD FOREIGN KEY ("cart_id") REFERENCES "cart" ("id");
 
 ALTER TABLE "cart_items" ADD FOREIGN KEY ("item_id") REFERENCES "items" ("id");
+
+ALTER TABLE "sessions" ADD FOREIGN KEY ("username") REFERENCES "users" ("username");

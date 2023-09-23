@@ -39,10 +39,12 @@ type LoginUserReqeust struct {
 }
 
 type LoginUserResponse struct {
-	SessionId            string             `json:"session_id"`
-	AccessToken          string             `json:"access_token"`
-	AccessTokenExpiredAt time.Time          `json:"access_token_expired_at"`
-	User                 CreateUserResponse `json:"user"`
+	SessionId             string             `json:"session_id"`
+	AccessToken           string             `json:"access_token"`
+	AccessTokenExpiredAt  time.Time          `json:"access_token_expired_at"`
+	RefreshToken          string             `json:"refresh_token"`
+	RefreshTokenExpiredAt time.Time          `json:"refresh_token_expired_at"`
+	User                  CreateUserResponse `json:"user"`
 }
 
 type CreateUserResponse struct {
@@ -126,6 +128,15 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 	if !ok {
 		fields = append(fields, "username")
 	}
+	user, err := s.store.GetUser(ctx, olduser)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotAcceptable, errorResponse(fmt.Errorf("invalid user")))
+			return
+		}
+		ctx.JSON(http.StatusNotAcceptable, errorResponse(err))
+		return
+	}
 	var req sqlc.UpdateUserParams
 	req.OldUser = olduser
 	for _, v := range fields {
@@ -145,7 +156,17 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))
 				return
 			}
-			req.HashedPassword.String = r.HashedPassword
+			err := util.CheckPassword(r.HashedPassword, user.HashedPassword)
+			fmt.Print(err)
+			if err == nil {
+				ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("password is same as before")))
+				return
+			}
+			hp, err := util.HashPassword(r.HashedPassword)
+			if err != nil {
+				ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+			}
+			req.HashedPassword.String = hp
 			req.HashedPassword.Valid = true
 		case "name":
 			var r UpdateUserFullName
@@ -171,7 +192,7 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 		}
 	}
 	fmt.Printf("%+v", req)
-	user, err := s.store.UpdateUser(ctx, req)
+	user, err = s.store.UpdateUser(ctx, req)
 	if err != nil {
 		ctx.JSON(http.StatusNotAcceptable, fmt.Errorf("error while updating error %w", err))
 		return
@@ -206,10 +227,29 @@ func (s *Server) LoginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
+	refreshToken, refreshPayload, err := s.paseto.CreateToken(user.Username, s.config.RefreshTokenDuration)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+	_, err = s.store.CreateSession(ctx, sqlc.CreateSessionParams{
+		ID:           refreshPayload.ID,
+		Username:     req.Username,
+		RefreshToken: refreshToken,
+		ClientIp:     ctx.ClientIP(),
+		IsBlocked:    false,
+		ExpiredAt:    refreshPayload.ExpiredAt,
+	})
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+	}
 	res := LoginUserResponse{
-		AccessToken:          token,
-		AccessTokenExpiredAt: payload.ExpiredAt,
-		User:                 userResponse(user),
+		SessionId:             payload.ID.String(),
+		AccessToken:           token,
+		AccessTokenExpiredAt:  payload.ExpiredAt,
+		User:                  userResponse(user),
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiredAt: refreshPayload.ExpiredAt,
 	}
 	ctx.JSON(http.StatusOK, res)
 }

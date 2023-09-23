@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	DBUrl               string        `mapstructure:"DB_URL"`
-	DBDriver            string        `mapstructure:"DB_DRIVER"`
-	HttpServerAddr      string        `mapstructure:"HTTP_SERVER_ADDRESS"`
-	TokenSymmetricKey   string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
-	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	DBUrl                string        `mapstructure:"DB_URL"`
+	DBDriver             string        `mapstructure:"DB_DRIVER"`
+	HttpServerAddr       string        `mapstructure:"HTTP_SERVER_ADDRESS"`
+	TokenSymmetricKey    string        `mapstructure:"TOKEN_SYMMETRIC_KEY"`
+	AccessTokenDuration  time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
+	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

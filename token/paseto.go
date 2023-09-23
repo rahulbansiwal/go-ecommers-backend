@@ -40,7 +40,8 @@ func (p *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 	if err != nil {
 		return payload, err
 	}
-	if payload.ExpiredAt.After(time.Now()) {
+	//fmt.Printf("%+v", payload)
+	if time.Now().After(payload.ExpiredAt) {
 		return nil, fmt.Errorf("token is expired")
 	}
 	return payload, nil

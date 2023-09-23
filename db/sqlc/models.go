@@ -7,6 +7,8 @@ package sqlc
 import (
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Address struct {
@@ -46,6 +48,16 @@ type ItemImage struct {
 	ID       int32  `json:"id"`
 	ItemID   int32  `json:"item_id"`
 	ImageUrl string `json:"image_url"`
+}
+
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	RefreshToken string    `json:"refresh_token"`
+	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiredAt    time.Time `json:"expired_at"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type User struct {

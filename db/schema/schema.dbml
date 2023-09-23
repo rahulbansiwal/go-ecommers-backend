@@ -58,3 +58,13 @@ Table cart_items as IT{
         (cart_id,item_id) [unique]
     }
 }
+
+Table sessions as s {
+    id uuid [pk,unique]
+    username varchar(255)   [not null,ref:> U.username]
+    refresh_token varchar(500) [not null]
+    client_ip varchar(255)  [not null]
+    is_blocked bool [not null,default: false]
+    expired_at timestamptz  [not null]
+    created_at timestamptz  [not null,default:`now()`]
+}

@@ -42,6 +42,10 @@ func (s *Server) setupRoutes() {
 	router.GET("/user/:id", s.GetUser)
 	router.POST("/user/:username", s.UpdateUser)
 	router.POST("/user/login", s.LoginUser)
+
+	authRoutes := router.Group("/", AuthMiddleware(s.paseto))
+	authRoutes.GET("/logout", s.LogoutUser)
+	authRoutes.GET("/user/logout/all", s.LogoutUserFromAllDevice)
 	// ADD NEW ROUTES
 
 	s.router = router
