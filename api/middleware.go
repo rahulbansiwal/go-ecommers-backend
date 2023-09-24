@@ -45,6 +45,7 @@ func AuthMiddleware(paseto *token.PasetoMaker) gin.HandlerFunc {
 			return
 		}
 		ctx.Set(authorizationPayloadKey, payload)
+		fmt.Print("passing to next handler")
 		ctx.Next()
 	}
 }

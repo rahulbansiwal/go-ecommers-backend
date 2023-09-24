@@ -45,7 +45,7 @@ func (s *Server) setupRoutes() {
 
 	authRoutes := router.Group("/", AuthMiddleware(s.paseto))
 	authRoutes.GET("/logout", s.LogoutUser)
-	authRoutes.GET("/user/logout/all", s.LogoutUserFromAllDevice)
+	authRoutes.GET("/logout/all", s.LogoutUserFromAllDevice)
 	// ADD NEW ROUTES
 
 	s.router = router
@@ -54,3 +54,5 @@ func (s *Server) setupRoutes() {
 func errorResponse(err error) gin.H {
 	return gin.H{"error": err.Error()}
 }
+
+// TODO: ADD GITHUB ACTIONS

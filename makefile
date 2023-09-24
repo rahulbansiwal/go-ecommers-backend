@@ -25,5 +25,7 @@ sqlc:
 	docker run --rm -v "$(pwd)":/src -w /src sqlc/sqlc generate
 test:
 	go test ./... -v
+mock:
+	mockgen -destination db/mock/mock.go -package mockdb ecom/db/sqlc Store
 
-.PHONY: schema postgres-server dropdb createdb new_migration migrateup migratedown sqlc test migrateupall migratedownall
+.PHONY: schema postgres-server dropdb createdb new_migration migrateup migratedown sqlc test migrateupall migratedownall mock
