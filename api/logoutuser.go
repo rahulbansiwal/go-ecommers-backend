@@ -20,9 +20,6 @@ type LogoutUserFromAllDevicesResponse struct {
 func (s *Server) LogoutUser(ctx *gin.Context) {
 	fmt.Print("inside the next handler")
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	if authPayload ==nil{
-		return
-	}
 	session, err := s.store.DeleteSessionById(ctx, authPayload.ID)
 	fmt.Print(err)
 	if err != nil {

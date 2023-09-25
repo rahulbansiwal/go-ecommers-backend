@@ -39,11 +39,11 @@ func (s *Server) setupRoutes() {
 	router := gin.Default()
 	gin.SetMode(gin.DebugMode)
 	router.POST("/user", s.CreateUser)
-	router.GET("/user/:id", s.GetUser)
-	router.POST("/user/:username", s.UpdateUser)
 	router.POST("/user/login", s.LoginUser)
 
 	authRoutes := router.Group("/", AuthMiddleware(s.paseto))
+	authRoutes.POST("/user/:username", s.UpdateUser)
+	authRoutes.GET("/user/:id", s.GetUser)
 	authRoutes.GET("/logout", s.LogoutUser)
 	authRoutes.GET("/logout/all", s.LogoutUserFromAllDevice)
 	// ADD NEW ROUTES

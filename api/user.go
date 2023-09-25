@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"ecom/db/sqlc"
 	"ecom/db/util"
+	"ecom/token"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -108,12 +109,23 @@ func (s *Server) CreateUser(ctx *gin.Context) {
 func (s *Server) GetUser(ctx *gin.Context) {
 	username := ctx.Param("id")
 	fmt.Printf("%+v", ctx)
-	user, err := s.store.GetUser(ctx, username)
-	if err != nil {
-		fmt.Println(err)
-		ctx.JSON(http.StatusNotFound, errorResponse(fmt.Errorf("user not found for the %v", username)))
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	if username != authpayload.Username {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("unauthorized")))
 		return
 	}
+	user, err := s.store.GetUser(ctx, username)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(fmt.Errorf("user not found for the %v", username)))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+
+	}
+
 	res := userResponse(user)
 	ctx.JSON(http.StatusOK, res)
 }
@@ -121,9 +133,15 @@ func (s *Server) GetUser(ctx *gin.Context) {
 func (s *Server) UpdateUser(ctx *gin.Context) {
 	olduser := ctx.Param("username")
 	if len(olduser) == 0 {
-		ctx.JSON(http.StatusBadRequest, fmt.Errorf("invalid user"))
+		ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid user")))
 		return
 	}
+	authpayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	
+	if authpayload.Username != olduser{
+		ctx.JSON(http.StatusUnauthorized,errorResponse(fmt.Errorf("unauthorized for the current user")))
+	}
+
 	fields, ok := ctx.GetQueryArray("fields")
 	if !ok {
 		fields = append(fields, "username")
