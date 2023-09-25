@@ -285,7 +285,7 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestUpdateUser(t *testing.T) {
-	user, _ := randomUser(t)
+	user, password := randomUser(t)
 	testcases := []struct {
 		name          string
 		body          gin.H
@@ -315,6 +315,27 @@ func TestUpdateUser(t *testing.T) {
 			},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				require.Equal(t, recorder.Code, http.StatusOK)
+			},
+		},
+		{
+			name: "SamePassword",
+			body: gin.H{
+				"full_name":       util.RandomFullName(6),
+				"hashed_password": password,
+				"mobile_number":   fmt.Sprint(util.RandomMobileNumber()),
+			},
+			param:      user.Username,
+			queryparam: "?fields=name&fields=password&fields=msisdn",
+			setupAuth: func(t *testing.T, req *http.Request, paesto *token.PasetoMaker, username string) {
+				token, _, err := paesto.CreateToken(username, time.Minute)
+				require.NoError(t, err)
+				req.Header.Set(authorizationHeaderKey, fmt.Sprint(authorizationTypeBearer, " ", token))
+			},
+			buildStubs: func(store *mockdb.MockStore) {
+				store.EXPECT().GetUser(gomock.Any(), user.Username).Times(1).Return(user, nil)
+			},
+			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+				require.Equal(t, recorder.Code, http.StatusBadRequest)
 			},
 		},
 	}
