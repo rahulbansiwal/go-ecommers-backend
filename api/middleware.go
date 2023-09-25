@@ -20,32 +20,31 @@ func AuthMiddleware(paseto *token.PasetoMaker) gin.HandlerFunc {
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
 		if len(authorizationHeader) == 0 {
 
-			ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("authorization header is not provided")))
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(fmt.Errorf("authorization header is not provided")))
 			return
 		}
 		fields := strings.Fields(authorizationHeader)
-
+		fmt.Print("len of fields", len(fields), authorizationHeader)
 		if len(fields) != 2 {
 
-			ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid authorization header value")))
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid authorization header value")))
 			return
 		}
 		authorizationType := strings.ToLower(fields[0])
 
 		if authorizationType != authorizationTypeBearer {
 
-			ctx.JSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid authorization type")))
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid authorization type")))
 			return
 		}
 		accessToken := fields[1]
 		payload, err := paseto.VerifyToken(accessToken)
 		if err != nil {
 
-			ctx.JSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("unable to verify token")))
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(fmt.Errorf("unable to verify token")))
 			return
 		}
 		ctx.Set(authorizationPayloadKey, payload)
-		fmt.Print("passing to next handler")
 		ctx.Next()
 	}
 }
