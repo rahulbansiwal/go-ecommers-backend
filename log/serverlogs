@@ -1,0 +1,9 @@
+[GIN-debug] POST   /user                     --> ecom/api.(*Server).CreateUser-fm (3 handlers)
+[GIN-debug] POST   /user/login               --> ecom/api.(*Server).LoginUser-fm (3 handlers)
+[GIN-debug] POST   /user/:username           --> ecom/api.(*Server).UpdateUser-fm (4 handlers)
+[GIN-debug] GET    /user/:id                 --> ecom/api.(*Server).GetUser-fm (4 handlers)
+[GIN-debug] GET    /logout                   --> ecom/api.(*Server).LogoutUser-fm (4 handlers)
+[GIN-debug] GET    /logout/all               --> ecom/api.(*Server).LogoutUserFromAllDevice-fm (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on 127.0.0.1:8080
