@@ -2,6 +2,7 @@ dbml-error.log
 */dbml-error.log
 .vscode/*
 *.vscode
-log/*
+log/**
+/log
 serverlogs
 log
