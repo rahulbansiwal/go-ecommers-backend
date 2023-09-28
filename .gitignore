@@ -3,4 +3,5 @@ dbml-error.log
 .vscode/*
 *.vscode
 log/
+log/serverlogs
 log/**
