@@ -30,6 +30,7 @@ type Querier interface {
 	GetItemImagesFromItemId(ctx context.Context, itemID int32) ([]ItemImage, error)
 	GetSessionFromId(ctx context.Context, id uuid.UUID) (Session, error)
 	GetUser(ctx context.Context, username string) (User, error)
+	GetaddressById(ctx context.Context, id int32) (Address, error)
 	UpdateAddress(ctx context.Context, arg UpdateAddressParams) (Address, error)
 	UpdateCartAmount(ctx context.Context, arg UpdateCartAmountParams) (Cart, error)
 	UpdateCartItem(ctx context.Context, arg UpdateCartItemParams) (CartItem, error)

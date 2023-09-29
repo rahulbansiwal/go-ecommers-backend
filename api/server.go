@@ -52,6 +52,9 @@ func (s *Server) setupRoutes() {
 	router.POST("/refreshtoken", s.renewAccessToken)
 
 	authRoutes := router.Group("/", AuthMiddleware(s.paseto))
+	authRoutes.POST("/address",s.addAddress)
+	authRoutes.GET("/address/:id",s.GetAddress)
+	authRoutes.DELETE("/address/:id",s.deleteAddress)
 	authRoutes.POST("/user/:username", s.UpdateUser)
 	authRoutes.GET("/user/:id", s.GetUser)
 	authRoutes.GET("/logout", s.LogoutUser)
