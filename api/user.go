@@ -102,6 +102,11 @@ func (s *Server) CreateUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(fmt.Errorf("error while creating user %w", err)))
 		return
 	}
+	_,err = s.store.CreateCart(ctx,req.Username)
+	if err != nil{
+		ctx.JSON(http.StatusInternalServerError,errorResponse(err))
+		return
+	}
 	res := userResponse(user)
 	ctx.JSON(http.StatusOK, res)
 }
@@ -160,7 +165,6 @@ func (s *Server) UpdateUser(ctx *gin.Context) {
 	for _, v := range fields {
 		switch v {
 		case "username":
-			// TODO: update username such that dependent tables will also update
 			var r UpdateUserUsername
 			if err := ctx.ShouldBindBodyWith(&r, binding.JSON); err != nil {
 				ctx.JSON(http.StatusBadRequest, errorResponse(err))

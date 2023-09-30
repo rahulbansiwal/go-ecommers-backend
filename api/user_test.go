@@ -72,8 +72,9 @@ func TestCreateUser(t *testing.T) {
 					HashedPassword: user.HashedPassword,
 					MobileNumber:   user.MobileNumber,
 				}
-				store.EXPECT().CreateUser(gomock.Any(), EqCreatUserParams(arg, password)).
+				first :=store.EXPECT().CreateUser(gomock.Any(), EqCreatUserParams(arg, password)).
 					Times(1).Return(user, nil)
+					store.EXPECT().CreateCart(gomock.Any(),arg.Username).After(first).Times(1).Return(sqlc.Cart{},nil)
 			},
 			setupAuth: func(t *testing.T, req *http.Request, paseto *token.PasetoMaker) {},
 			checkResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {

@@ -22,3 +22,6 @@ DELETE FROM addresses WHERE id = $1 RETURNING *;
 
 -- name: GetAddresses :many
 SELECT * FROM addresses WHERE username = $1;
+
+-- name: GetaddressById :one
+SELECT * FROM addresses WHERE id = $1 LIMIT 1;

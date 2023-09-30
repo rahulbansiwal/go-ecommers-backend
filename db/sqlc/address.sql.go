@@ -108,6 +108,26 @@ func (q *Queries) GetAddresses(ctx context.Context, username string) ([]Address,
 	return items, nil
 }
 
+const getaddressById = `-- name: GetaddressById :one
+SELECT id, username, full_name, country_code, city, street, landmark, mobile_number FROM addresses WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetaddressById(ctx context.Context, id int32) (Address, error) {
+	row := q.db.QueryRowContext(ctx, getaddressById, id)
+	var i Address
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.FullName,
+		&i.CountryCode,
+		&i.City,
+		&i.Street,
+		&i.Landmark,
+		&i.MobileNumber,
+	)
+	return i, err
+}
+
 const updateAddress = `-- name: UpdateAddress :one
 UPDATE addresses
 SET
