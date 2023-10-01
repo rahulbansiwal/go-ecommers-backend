@@ -16,7 +16,7 @@ func newTestServer(t *testing.T, store sqlc.Store) *Server {
 		TokenSymmetricKey:   util.RandomString(32),
 		AccessTokenDuration: time.Minute,
 	}
-	server, err := NewServer(config, store)
+	server, err := NewServer(config, store, nil)
 	require.NoError(t, err)
 	return server
 }

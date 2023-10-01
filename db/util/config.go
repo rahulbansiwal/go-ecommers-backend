@@ -15,6 +15,10 @@ type Config struct {
 	RefreshTokenDuration time.Duration `mapstructure:"REFRESH_TOKEN_DURATION"`
 	LOGPATH              string        `mapstructure:"LOG_PATH"`
 	LOGFILEPREFIX        string        `mapstructure:"LOG_FILE_PREFIX"`
+	AWSACCESSKEY         string        `mapstructure:"AWS_ACCESS_KEY"`
+	AWSSECRETKEY         string        `mapstructure:"AWS_SECRET_KEY"`
+	S3REGION             string        `mapstructure:"S3_REGION"`
+	S3BUCKETNAME         string        `mapstructure:"S3_BUCKET_NAME"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

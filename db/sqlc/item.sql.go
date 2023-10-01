@@ -8,32 +8,27 @@ package sqlc
 import (
 	"context"
 	"database/sql"
-	"time"
 )
 
 const createItem = `-- name: CreateItem :one
 INSERT INTO items(
-    name,price,created_at,discount,category,created_by
+    name,price,category,created_by
 )
-values ($1,$2,$3,$4,$5,$6)
+values ($1,$2,$3,$4)
 RETURNING id, name, price, created_by, discount, category, created_at
 `
 
 type CreateItemParams struct {
-	Name      string    `json:"name"`
-	Price     string    `json:"price"`
-	CreatedAt time.Time `json:"created_at"`
-	Discount  int32     `json:"discount"`
-	Category  string    `json:"category"`
-	CreatedBy string    `json:"created_by"`
+	Name      string `json:"name"`
+	Price     string `json:"price"`
+	Category  string `json:"category"`
+	CreatedBy string `json:"created_by"`
 }
 
 func (q *Queries) CreateItem(ctx context.Context, arg CreateItemParams) (Item, error) {
 	row := q.db.QueryRowContext(ctx, createItem,
 		arg.Name,
 		arg.Price,
-		arg.CreatedAt,
-		arg.Discount,
 		arg.Category,
 		arg.CreatedBy,
 	)

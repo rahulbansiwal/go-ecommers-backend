@@ -1,8 +1,8 @@
 -- name: CreateItem :one
 INSERT INTO items(
-    name,price,created_at,discount,category,created_by
+    name,price,category,created_by
 )
-values ($1,$2,$3,$4,$5,$6)
+values ($1,$2,$3,$4)
 RETURNING *;
 
 -- name: GetItemById :one
