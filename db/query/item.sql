@@ -8,6 +8,10 @@ RETURNING *;
 -- name: GetItemById :one
 SELECT * FROM items WHERE id = $1 LIMIT 1;
 
+
+-- name: GetItemByName :one
+SELECT * FROM items WHERE name = $1 LIMIT 1;
+
 -- name: DeleteItem :one
 DELETE FROM items WHERE id = $1 
 RETURNING *;

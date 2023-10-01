@@ -310,6 +310,21 @@ func (mr *MockStoreMockRecorder) GetItemById(arg0, arg1 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetItemById", reflect.TypeOf((*MockStore)(nil).GetItemById), arg0, arg1)
 }
 
+// GetItemByName mocks base method.
+func (m *MockStore) GetItemByName(arg0 context.Context, arg1 string) (sqlc.Item, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetItemByName", arg0, arg1)
+	ret0, _ := ret[0].(sqlc.Item)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetItemByName indicates an expected call of GetItemByName.
+func (mr *MockStoreMockRecorder) GetItemByName(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetItemByName", reflect.TypeOf((*MockStore)(nil).GetItemByName), arg0, arg1)
+}
+
 // GetItemImagesFromItemId mocks base method.
 func (m *MockStore) GetItemImagesFromItemId(arg0 context.Context, arg1 int32) ([]sqlc.ItemImage, error) {
 	m.ctrl.T.Helper()

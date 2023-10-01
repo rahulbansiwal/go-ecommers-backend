@@ -1,9 +1,9 @@
 -- name: CreateCartItem :one
 
 INSERT INTO cart_items(
-    cart_id,item_id
+    cart_id,item_id,quantity
 )
-values ($1,$2)
+values ($1,$2,$3)
 RETURNING *;
 
 -- name: UpdateCartItem :one

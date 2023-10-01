@@ -46,12 +46,14 @@ func (s *Server) setupRoutes() {
 	if err == nil {
 		gin.DefaultWriter = io.MultiWriter(f)
 	}
+
 	router.Use(jsonLoggerMiddleware())
 	router.MaxMultipartMemory = 8 << 20
 	gin.SetMode(gin.DebugMode)
 	router.POST("/user", s.CreateUser)
 	router.POST("/user/login", s.LoginUser)
 	router.POST("/refreshtoken", s.renewAccessToken)
+	router.GET("/item/:id",s.getItem)
 
 	authRoutes := router.Group("/", AuthMiddleware(s.paseto))
 	authRoutes.POST("/address", s.addAddress)
@@ -62,6 +64,7 @@ func (s *Server) setupRoutes() {
 	authRoutes.GET("/logout", s.LogoutUser)
 	authRoutes.GET("/logout/all", s.LogoutUserFromAllDevice)
 	authRoutes.POST("/item", s.createItem)
+	authRoutes.POST("/cart/add",s.addItemToCart)
 
 	// ADD NEW ROUTES
 

@@ -84,6 +84,25 @@ func (q *Queries) GetItemById(ctx context.Context, id int32) (Item, error) {
 	return i, err
 }
 
+const getItemByName = `-- name: GetItemByName :one
+SELECT id, name, price, created_by, discount, category, created_at FROM items WHERE name = $1 LIMIT 1
+`
+
+func (q *Queries) GetItemByName(ctx context.Context, name string) (Item, error) {
+	row := q.db.QueryRowContext(ctx, getItemByName, name)
+	var i Item
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Price,
+		&i.CreatedBy,
+		&i.Discount,
+		&i.Category,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateItem = `-- name: UpdateItem :one
 UPDATE items
 SET

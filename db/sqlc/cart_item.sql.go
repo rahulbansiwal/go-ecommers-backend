@@ -13,19 +13,20 @@ import (
 const createCartItem = `-- name: CreateCartItem :one
 
 INSERT INTO cart_items(
-    cart_id,item_id
+    cart_id,item_id,quantity
 )
-values ($1,$2)
+values ($1,$2,$3)
 RETURNING cart_id, item_id, quantity
 `
 
 type CreateCartItemParams struct {
-	CartID int32 `json:"cart_id"`
-	ItemID int32 `json:"item_id"`
+	CartID   int32         `json:"cart_id"`
+	ItemID   int32         `json:"item_id"`
+	Quantity sql.NullInt32 `json:"quantity"`
 }
 
 func (q *Queries) CreateCartItem(ctx context.Context, arg CreateCartItemParams) (CartItem, error) {
-	row := q.db.QueryRowContext(ctx, createCartItem, arg.CartID, arg.ItemID)
+	row := q.db.QueryRowContext(ctx, createCartItem, arg.CartID, arg.ItemID, arg.Quantity)
 	var i CartItem
 	err := row.Scan(&i.CartID, &i.ItemID, &i.Quantity)
 	return i, err

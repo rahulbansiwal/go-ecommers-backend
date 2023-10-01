@@ -63,3 +63,18 @@ func RandomAddressDetails() randomaddress {
 func RandomAmount(n int) int {
 	return rand.Intn(n)
 }
+
+func ValidateMIMEType(s string) bool {
+	// image/jpeg
+	substr := strings.Split(s, "/")
+	if len(substr) <= 1 {
+		return false
+	}
+	if substr[0] != "image" {
+		return false
+	}
+	if substr[1] != "jpg" && substr[1] != "jpeg" && substr[1] != "png" {
+		return false
+	}
+	return true
+}
