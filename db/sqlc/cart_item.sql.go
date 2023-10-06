@@ -77,21 +77,39 @@ func (q *Queries) GetCartItemFromCartID(ctx context.Context, cartID int32) ([]Ca
 	return items, nil
 }
 
+const getCartItemFromCartIDAndItemID = `-- name: GetCartItemFromCartIDAndItemID :one
+SELECT cart_id, item_id, quantity FROM cart_items
+WHERE cart_id = $1 AND item_id = $2
+`
+
+type GetCartItemFromCartIDAndItemIDParams struct {
+	CartID int32 `json:"cart_id"`
+	ItemID int32 `json:"item_id"`
+}
+
+func (q *Queries) GetCartItemFromCartIDAndItemID(ctx context.Context, arg GetCartItemFromCartIDAndItemIDParams) (CartItem, error) {
+	row := q.db.QueryRowContext(ctx, getCartItemFromCartIDAndItemID, arg.CartID, arg.ItemID)
+	var i CartItem
+	err := row.Scan(&i.CartID, &i.ItemID, &i.Quantity)
+	return i, err
+}
+
 const updateCartItem = `-- name: UpdateCartItem :one
 UPDATE cart_items
 SET
     quantity = $1
-WHERE cart_id = $1 AND item_id = $2
+WHERE cart_id = $3 AND item_id = $2
 RETURNING cart_id, item_id, quantity
 `
 
 type UpdateCartItemParams struct {
 	Quantity sql.NullInt32 `json:"quantity"`
 	ItemID   int32         `json:"item_id"`
+	CartID   int32         `json:"cart_id"`
 }
 
 func (q *Queries) UpdateCartItem(ctx context.Context, arg UpdateCartItemParams) (CartItem, error) {
-	row := q.db.QueryRowContext(ctx, updateCartItem, arg.Quantity, arg.ItemID)
+	row := q.db.QueryRowContext(ctx, updateCartItem, arg.Quantity, arg.ItemID, arg.CartID)
 	var i CartItem
 	err := row.Scan(&i.CartID, &i.ItemID, &i.Quantity)
 	return i, err

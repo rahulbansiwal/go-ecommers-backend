@@ -6,7 +6,6 @@ package sqlc
 
 import (
 	"context"
-
 	"github.com/google/uuid"
 )
 
@@ -27,6 +26,7 @@ type Querier interface {
 	GetAddresses(ctx context.Context, username string) ([]Address, error)
 	GetCart(ctx context.Context, username string) (Cart, error)
 	GetCartItemFromCartID(ctx context.Context, cartID int32) ([]CartItem, error)
+	GetCartItemFromCartIDAndItemID(ctx context.Context, arg GetCartItemFromCartIDAndItemIDParams) (CartItem, error)
 	GetItemById(ctx context.Context, id int32) (Item, error)
 	GetItemByName(ctx context.Context, name string) (Item, error)
 	GetItemImagesFromItemId(ctx context.Context, itemID int32) ([]ItemImage, error)

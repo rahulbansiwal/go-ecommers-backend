@@ -70,6 +70,21 @@ func (mr *MockStoreMockRecorder) AddAddressTx(arg0, arg1 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddAddressTx", reflect.TypeOf((*MockStore)(nil).AddAddressTx), arg0, arg1)
 }
 
+// AddCartItemTx mocks base method.
+func (m *MockStore) AddCartItemTx(arg0 context.Context, arg1 sqlc.AddCartItemTxRequest) (sqlc.AddCartItemTxResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddCartItemTx", arg0, arg1)
+	ret0, _ := ret[0].(sqlc.AddCartItemTxResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// AddCartItemTx indicates an expected call of AddCartItemTx.
+func (mr *MockStoreMockRecorder) AddCartItemTx(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddCartItemTx", reflect.TypeOf((*MockStore)(nil).AddCartItemTx), arg0, arg1)
+}
+
 // CreateCart mocks base method.
 func (m *MockStore) CreateCart(arg0 context.Context, arg1 string) (sqlc.Cart, error) {
 	m.ctrl.T.Helper()
@@ -293,6 +308,21 @@ func (m *MockStore) GetCartItemFromCartID(arg0 context.Context, arg1 int32) ([]s
 func (mr *MockStoreMockRecorder) GetCartItemFromCartID(arg0, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCartItemFromCartID", reflect.TypeOf((*MockStore)(nil).GetCartItemFromCartID), arg0, arg1)
+}
+
+// GetCartItemFromCartIDAndItemID mocks base method.
+func (m *MockStore) GetCartItemFromCartIDAndItemID(arg0 context.Context, arg1 sqlc.GetCartItemFromCartIDAndItemIDParams) (sqlc.CartItem, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCartItemFromCartIDAndItemID", arg0, arg1)
+	ret0, _ := ret[0].(sqlc.CartItem)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCartItemFromCartIDAndItemID indicates an expected call of GetCartItemFromCartIDAndItemID.
+func (mr *MockStoreMockRecorder) GetCartItemFromCartIDAndItemID(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCartItemFromCartIDAndItemID", reflect.TypeOf((*MockStore)(nil).GetCartItemFromCartIDAndItemID), arg0, arg1)
 }
 
 // GetItemById mocks base method.

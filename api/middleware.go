@@ -24,7 +24,6 @@ func AuthMiddleware(paseto *token.PasetoMaker) gin.HandlerFunc {
 			return
 		}
 		fields := strings.Fields(authorizationHeader)
-		fmt.Print("len of fields", len(fields), authorizationHeader)
 		if len(fields) != 2 {
 
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, errorResponse(fmt.Errorf("invalid authorization header value")))

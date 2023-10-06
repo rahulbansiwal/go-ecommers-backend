@@ -8,6 +8,7 @@ import (
 type Store interface {
 	Querier
 	AddAddressTx(ctx context.Context, arg AddAddressesTxParams) (AddAddressesTxResult, error)
+	AddCartItemTx(ctx context.Context, param AddCartItemTxRequest) (AddCartItemTxResponse, error)
 	// update new transaction functions
 }
 
